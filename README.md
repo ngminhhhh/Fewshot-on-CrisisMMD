@@ -215,13 +215,7 @@ f = α · f<sub>image</sub> + (1 - α) · f<sub>text</sub>
 
 The fused representation is passed through an MLP projection head to learn task-specific features.
 
-We experiment with two variants:
-
-- **Model 1**:
-  - Hidden layers: `[256, 256]`
-
-- **Model 2**:
-  - Hidden layers: `[256]`
+We use Hidden layers: `[256, 256]`
 
 Each layer uses:
 - Linear transformation  
