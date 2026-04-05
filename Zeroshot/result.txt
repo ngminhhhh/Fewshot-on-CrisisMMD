@@ -1,0 +1,27 @@
+CLIP:
+  Top-1 Accuracy      : 0.9896
+  Top-5 Accuracy      : 0.9990
+  Total Infer Time    : 23.8544 s
+  Avg Time / Image    : 6.0775 ms
+  Throughput          : 164.54 images/s
+
+SigLIP:
+  Top-1 Accuracy      : 0.9944
+  Top-5 Accuracy      : 0.9997
+  Total Infer Time    : 131.4051 s
+  Avg Time / Image    : 33.4790 ms
+  Throughput          : 29.87 images/s
+
+OpenCLIP:
+  Top-1 Accuracy      : 0.9911
+  Top-5 Accuracy      : 0.9997
+  Total Infer Time    : 31.6250 s
+  Avg Time / Image    : 8.0573 ms
+  Throughput          : 124.11 images/s
+
+ALIGN:
+  Top-1 Accuracy      : 0.9975
+  Top-5 Accuracy      : 1.0000
+  Total Infer Time    : 103.6274 s
+  Avg Time / Image    : 26.4019 ms
+  Throughput          : 37.88 images/s
