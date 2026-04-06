@@ -105,7 +105,7 @@ Compared to the full ImageNet dataset, Imagenette is significantly smaller, maki
 
 ## 2. Few-shot Learning
 
-Few-shot learning aims to train models that can generalize to new tasks using **only a small number of labeled examples per class**. This setting is more practical than traditional supervised learning in many real-world applications where labeled data is scarce.
+Few-shot learning focuses on adapting models to new tasks with only a small number of labeled examples per class. This setting is especially useful when annotated data is limited.
 
 ---
 
@@ -113,11 +113,9 @@ Few-shot learning aims to train models that can generalize to new tasks using **
 
 ### Overview
 
-We use the https://crisisnlp.qcri.org/crisismmd.html — a multimodal dataset consisting of images and tweets collected during natural disasters.
+We use the https://crisisnlp.qcri.org/crisismmd.html dataset, a multimodal benchmark of disaster-related images and tweets.
 
-This work focuses on: **Task 2: Humanitarian Classification**
-
-The goal is to classify each image-tweet pair into one of the following humanitarian categories:
+This project focuses on **Task 2: Humanitarian Classification**, where each image-tweet pair is classified into one of the following categories:
 
 - Infrastructure and utility damage  
 - Not humanitarian  
@@ -128,121 +126,128 @@ The goal is to classify each image-tweet pair into one of the following humanita
 - Vehicle damage  
 - Missing or found people  
 
----
-
 ### Dataset Statistics
 
 | Split | #Samples |
-|------|---------|
+|------|---------:|
 | Train | `13608` |
 | Val   | `2237` |
 | Test  | `2237` |
 
----
-
 ### Class Distribution
 
 #### Train Set
-![Train Distribution](report_images/Fewshot/train_dis.png)
+<p align="center">
+  <img src="report_images/Fewshot/train_dis.png" width="50%">
+</p>
 
 #### Validation Set
-![Train Distribution](report_images/Fewshot/val_dis.png)
+<p align="center">
+  <img src="report_images/Fewshot/val_dis.png" width="50%">
+</p>
 
 #### Test Set
-![Train Distribution](report_images/Fewshot/test_dis.png)
+<p align="center">
+  <img src="report_images/Fewshot/test_dis.png" width="50%">
+</p>
 
----
+### Sample Images (Train Set)
 
-### 🖼️ Sample Images (Train Set)
-
-Each image below shows **5 randomly sampled examples per class**:
+Each figure shows **5 sampled examples per class**.
 
 #### Infrastructure & Utility Damage
-![infrastructure](report_images/Fewshot/infrastructure_and_utility_damage.png)
+<p align="center">
+  <img src="report_images/Fewshot/infrastructure_and_utility_damage.png" width="60%">
+</p>
 
 #### Not Humanitarian
-![not_humanitarian](report_images/Fewshot/not_humanitarian.png)
+<p align="center">
+  <img src="report_images/Fewshot/not_humanitarian.png" width="60%">
+</p>
 
 #### Rescue / Volunteering / Donation Effort
-![rescue](report_images/Fewshot/rescue_volunteering_or_donation_effort.png)
+<p align="center">
+  <img src="report_images/Fewshot/rescue_volunteering_or_donation_effort.png" width="60%">
+</p>
 
 #### Other Relevant Information
-![other](report_images/Fewshot/other_relevant_infomation.png)
+<p align="center">
+  <img src="report_images/Fewshot/other_relevant_infomation.png" width="60%">
+</p>
 
 #### Affected Individuals
-![affected](report_images/Fewshot/affected_individuals.png)
+<p align="center">
+  <img src="report_images/Fewshot/affected_individuals.png" width="60%">
+</p>
 
 #### Injured or Dead People
-![injured](report_images/Fewshot/injured_or_dead_people.png)
+<p align="center">
+  <img src="report_images/Fewshot/injured_or_dead_people.png" width="60%">
+</p>
 
 #### Vehicle Damage
-![vehicle](report_images/Fewshot/vehicle_damage.png)
+<p align="center">
+  <img src="report_images/Fewshot/vehicle_damage.png" width="60%">
+</p>
 
 #### Missing or Found People
-![missing](report_images/Fewshot/missing_or_found_people.png)
----
-
-## 2. Model
-
-![Model Architecture](report_images/Fewshot/model.png)
-
-### Model Description
-
-We propose a multimodal few-shot classifier built on top of **CLIP (ViT-B/32)** as a frozen backbone.
+<p align="center">
+  <img src="report_images/Fewshot/missing_or_found_people.png" width="60%">
+</p>
 
 ---
 
-#### Feature Extraction
+## Model
 
-- **Image Encoder**: Extract visual features from input images  
-- **Text Encoder**: Encode class prompts into semantic embeddings  
+<p align="center">
+  <img src="report_images/Fewshot/model.png" width="60%">
+</p>
 
-Both encoders are frozen to leverage pretrained knowledge.
+### Overview
 
----
+We build a multimodal few-shot classifier using **CLIP (ViT-B/32)** as a frozen backbone.
 
-#### Multimodal Fusion
+### Feature Extraction
 
-Image and text features are combined using a weighted sum:
+- **Image encoder** extracts visual features from input images  
+- **Text encoder** encodes class prompts into semantic embeddings  
 
-f = α · f<sub>image</sub> + (1 - α) · f<sub>text</sub>
-- α = **0.5**, giving equal importance to both modalities  
-- Features are L2-normalized before fusion  
+Both encoders are frozen to preserve pretrained knowledge and reduce overfitting.
 
----
+### Multimodal Fusion
 
-#### Projection Head
+Image and text features are fused by weighted averaging:
 
-The fused representation is passed through an MLP projection head to learn task-specific features.
+`f = α · f_image + (1 - α) · f_text`
 
-We use Hidden layers: `[256, 256]`
+- α = **0.5**
+- Both features are L2-normalized before fusion
 
-Each layer uses:
-- Linear transformation  
-- ReLU activation  
+### Projection Head
 
----
+The fused representation is passed through a lightweight MLP with hidden dimensions:
 
-#### Output Representation
+`[256, 128]`
+
+Each layer consists of:
+
+- Linear
+- ReLU
+
+### Output Representation
 
 - Final embeddings are L2-normalized  
-- Used for classification via similarity or downstream classifier  
+- Used for classification through similarity or a downstream classifier  
 
----
+### Design Choices
 
-#### Key Design Choices
-
-- Freeze CLIP → avoid overfitting in few-shot setting  
-- Balanced fusion (α = 0.5) → combine visual + textual signals  
-- Lightweight MLP → adapt features to task  
-
----
-
-This architecture effectively leverages pretrained multimodal representations while remaining simple and efficient for few-shot learning.
+- **Frozen CLIP** to improve generalization in low-data settings  
+- **Balanced fusion** to combine visual and textual information equally  
+- **Lightweight MLP** to adapt pretrained features to the task  
 
 ### Prompt Engineering
 
-We design prompts to align with humanitarian semantics:
+We use class-specific prompts to align text embeddings with humanitarian semantics:
 
 ```python
 class_prompts = [
@@ -257,4 +262,14 @@ class_prompts = [
 ]
 ```
 
-### Results
+## Results
+<p align="center">
+  <img src="report_images/Fewshot/acc-loss.png" width="60%">
+</p>
+Epoch 3 has the highest accuracy on val set so we choice weights of epoch 3 is the best weights and use it to evaluate on test set 
+
+| Dataset | Top-1 Accuracy | Top-5 Accuracy |
+|--------|--------------|---------------|
+| Train  | 70.10%       | 98.73%        |
+| Val    | 62.49%       | 97.99%        |
+| Test   | 61.51%       | 97.27%        |

@@ -17,7 +17,7 @@ class Classifier(nn.Module):
         for p in self.clip_encoder.parameters():
             p.requires_grad = False
 
-        hidden_dims = [256, 256]
+        hidden_dims = [256, 128]
         in_dim = self.clip_encoder.visual.output_dim
 
         layers = []
